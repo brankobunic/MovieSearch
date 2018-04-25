@@ -1,36 +1,25 @@
 package com.bravostudio.servlets;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-
 import org.json.JSONArray;
-import com.bravostudio.lucene.Indexer;
 
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String URL = "https://api.myjson.com/bins/110ew3";
-	Path dir = Paths.get("src/main/resources/lucene-database");
-	private boolean first = true;
 
 	public MainServlet() {
 		super();
@@ -40,20 +29,13 @@ public class MainServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		String inputSearch = request.getParameter("movieSearch");
-
-		if (first) {
-			Indexer indexer = new Indexer(dir, URL);
-			indexer.createIndex();
-			first = false;
-		}
-
-		Directory indexDirectory = FSDirectory.open(dir);
-		IndexReader indexReader = DirectoryReader.open(indexDirectory);
 		JSONArray responseJson = new JSONArray();
 
 		if (inputSearch != null) {
 
 			try {
+				Directory indexDirectory = (Directory) getServletContext().getAttribute("indexDirectory");
+				IndexReader indexReader = DirectoryReader.open(indexDirectory);
 				IndexSearcher indexSearcher = new IndexSearcher(indexReader);
 				Analyzer analyzer = new StandardAnalyzer();
 
@@ -66,10 +48,12 @@ public class MainServlet extends HttpServlet {
 					Document doc = indexSearcher.doc(score.doc);
 					responseJson.put(doc.get("title"));
 				}
+
+				int numDocs = indexReader.numDocs();
+				System.out.println(numDocs);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 		response.setContentType("application/json");

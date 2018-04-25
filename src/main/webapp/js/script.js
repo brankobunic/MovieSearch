@@ -2,8 +2,8 @@ $(function() {
 	$("#search").autocomplete({
 		source : function(request, response) {
 			$.ajax({
-				url : "/MainServlet",
-				method : "GET",
+				url : "",
+				method : "POST",
 				data : {
 					term : request.term
 				},

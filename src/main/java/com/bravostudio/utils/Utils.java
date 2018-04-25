@@ -12,10 +12,10 @@ public class Utils {
 	public static JSONArray parseJSON(String url) {
 
 		StringBuilder builderJson = new StringBuilder();
-
+		BufferedReader in = null;
 		try {
 			URL jsonURL = new URL(url);
-			BufferedReader in = new BufferedReader(new InputStreamReader(jsonURL.openStream()));
+			in = new BufferedReader(new InputStreamReader(jsonURL.openStream()));
 			String inputLine;
 
 			while ((inputLine = in.readLine()) != null) {

@@ -42,10 +42,9 @@ public class Indexer {
 
 	public void openIndex() {
 
-		Directory dir;
+		Directory dir = null;
 
 		try {
-
 			dir = FSDirectory.open(indexPath);
 			indexWriter = new IndexWriter(dir, new IndexWriterConfig(new StandardAnalyzer()));
 
