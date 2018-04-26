@@ -8,6 +8,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -25,7 +28,9 @@ public class ContextListener implements ServletContextListener {
 
 		try {
 			Directory indexDirectory = FSDirectory.open(dir);
-			sce.getServletContext().setAttribute("indexDirectory", indexDirectory);
+			IndexReader indexReader = DirectoryReader.open(indexDirectory);
+			IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+			sce.getServletContext().setAttribute("indexSearcher", indexSearcher);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -34,9 +34,7 @@ public class MainServlet extends HttpServlet {
 		if (inputSearch != null) {
 
 			try {
-				Directory indexDirectory = (Directory) getServletContext().getAttribute("indexDirectory");
-				IndexReader indexReader = DirectoryReader.open(indexDirectory);
-				IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+				IndexSearcher indexSearcher = (IndexSearcher) getServletContext().getAttribute("indexSearcher");
 				Analyzer analyzer = new StandardAnalyzer();
 
 				MultiFieldQueryParser parser = new MultiFieldQueryParser(
@@ -48,9 +46,6 @@ public class MainServlet extends HttpServlet {
 					Document doc = indexSearcher.doc(score.doc);
 					responseJson.put(doc.get("title"));
 				}
-
-				int numDocs = indexReader.numDocs();
-				System.out.println(numDocs);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
